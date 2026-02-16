@@ -43,7 +43,6 @@ dependencies {
   api "de.tomgrill.gdxdialogs:gdx-dialogs-core:$dialogsVersion"
   api "games.rednblack.miniaudio:miniaudio:$miniaudioVersion"
   api "org.apache.commons:commons-collections4:$commonsCollectionsVersion"
-    implementation 'androidx.xr.scenecore:scenecore:1.0.0-alpha11'
 
     if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"

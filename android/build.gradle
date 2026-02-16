@@ -32,7 +32,7 @@ android {
   }
   defaultConfig {
     applicationId 'io.github.pmdm'
-    minSdkVersion 21
+    minSdkVersion 24
     targetSdkVersion 35
     versionCode 1
     versionName "1.0"
@@ -64,6 +64,7 @@ dependencies {
   implementation "com.github.MrStahlfelge.gdx-websockets:common:$websocketVersion"
   implementation "com.github.tommyettinger:libgdxoboe:$libgdxOboeVersion"
   implementation "de.tomgrill.gdxdialogs:gdx-dialogs-android:$dialogsVersion"
+  implementation "androidx.xr.scenecore:scenecore:1.0.0-alpha11"
   implementation project(':core')
 
   natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
