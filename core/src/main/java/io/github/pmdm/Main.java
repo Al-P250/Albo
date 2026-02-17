@@ -24,7 +24,7 @@ public class Main extends ApplicationAdapter {
         background = new Texture(Gdx.files.internal("NonParallax.png"));
         esqueleto = new Mob(100,100,"SkeletonWalk.png", 13);
         esqueleto.setVelocity(50,0);
-        prota=new Personaje("bucket.png");
+        prota=new Personaje("bucket.png", 100, 100);
         //image = new Texture("libgdx.png");
     }
 
@@ -33,6 +33,7 @@ public class Main extends ApplicationAdapter {
         float deltaTime = Gdx.graphics.getDeltaTime();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         esqueleto.update(deltaTime);
+        prota.update(deltaTime);
         batch.begin();
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         esqueleto.draw(batch);
@@ -45,6 +46,7 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         background.dispose();
         esqueleto.dispose();
+        prota.dispose();
         //image.dispose();
     }
 }
