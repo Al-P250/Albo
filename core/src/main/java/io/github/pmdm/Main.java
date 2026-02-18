@@ -3,8 +3,10 @@ package io.github.pmdm;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -22,6 +24,11 @@ public class Main extends ApplicationAdapter {
     Mob esqueleto;
     Personaje prota;
     Controllers controllers;
+
+    //Para clickar con ratón
+    Vector2 touchPos;
+
+    OrthographicCamera camara;
 
 
     @Override
@@ -43,6 +50,8 @@ public class Main extends ApplicationAdapter {
     public void resize(int width, int height) {
         super.resize(width, height);
 
+        camara=new OrthographicCamera();
+        camara.setToOrtho(false,1000,480);
     }
 
     @Override
@@ -52,6 +61,12 @@ public class Main extends ApplicationAdapter {
         prota.update(deltaTime);
         esqueleto.update(deltaTime);
 
+        camara.position.x +=(prota.position.x -camara.position.x)*0.1f;
+        camara.position.y +=(prota.position.y -camara.position.y)*0.1f;
+        camara.position.x= MathUtils.clamp(prota.position.x,camara.viewportWidth/2, Gdx.graphics.getWidth()-camara.viewportWidth/2);
+        camara.position.y= MathUtils.clamp(prota.position.y,camara.viewportHeight/2, Gdx.graphics.getHeight()-camara.viewportHeight/2);
+        camara.update();
+        batch.setProjectionMatrix(camara.combined);
         batch.begin();
 
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
