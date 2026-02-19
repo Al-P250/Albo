@@ -27,9 +27,10 @@ public class Controllers {
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
+        table.setFillParent(true);
         table.right().bottom();
 
-        Image btnSaltar = new Image(new Texture("cosa.png"));
+        Image btnSaltar = new Image(new Texture("flecha-arriba.png"));
         btnSaltar.setSize(50,50);
 
         btnSaltar.addListener(new InputListener(){
@@ -46,7 +47,7 @@ public class Controllers {
             }
         });
 
-        Image btnAvanzar = new Image(new Texture("cosa.png"));
+        Image btnAvanzar = new Image(new Texture("flecha-avanzar.png"));
         btnAvanzar.setSize(50,50);
 
         btnAvanzar.addListener(new InputListener(){
@@ -63,7 +64,7 @@ public class Controllers {
             }
         });
 
-        Image btnRetroceder = new Image(new Texture("cosa.png"));
+        Image btnRetroceder = new Image(new Texture("flecha-retroceder.png"));
         btnRetroceder.setSize(50,50);
 
         btnRetroceder.addListener(new InputListener(){
@@ -84,11 +85,12 @@ public class Controllers {
         table.add(btnSaltar).size(btnSaltar.getWidth(), btnSaltar.getHeight());
         table.add();
         table.row().pad(5,5,5,5);
-        table.add(btnAvanzar).size(btnAvanzar.getWidth(), btnAvanzar.getHeight());
-        table.add();
         table.add(btnRetroceder).size(btnRetroceder.getWidth(), btnRetroceder.getHeight());
+        table.add();
+        table.add(btnAvanzar).size(btnAvanzar.getWidth(), btnAvanzar.getHeight());
 
         stage.addActor(table);
+
 
     }
 
@@ -121,6 +123,6 @@ public class Controllers {
     }
 
     public void resize(int wisth, int height) {
-
+        viewport.update(wisth, height);
     }
 }
