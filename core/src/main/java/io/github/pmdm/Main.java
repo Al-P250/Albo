@@ -10,9 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.bullet.collision._btMprSimplex_t;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -32,10 +29,10 @@ public class Main extends ApplicationAdapter {
         world = new World(new Vector2(0,-10), true);
         background = new Texture(Gdx.files.internal("NonParallax.png"));
 
-        esqueleto = new Mob(100,100,"char_blue_2_walking.png", 8);
+        esqueleto = new Mob(100,100,"SkeletonWalk.png", 13);
         esqueleto.setVelocity(50,0);
 
-        prota=new Personaje("bucket.png", 100, 100);
+        prota=new Personaje("Idle_KG_2.png",100, 100,4);
 
         controllers = new Controllers();
 
@@ -65,7 +62,7 @@ public class Main extends ApplicationAdapter {
             velocidad.x = 0;
         }
         if (saltar && prota.getPosition().y == 0) {
-            velocidad.y = 500;
+            prota.jump();
         }
 
         prota.setVelocidad(velocidad);
