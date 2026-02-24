@@ -59,22 +59,23 @@ public class Main extends ApplicationAdapter {
 
     public void handleInput() {
         Vector2 velocidad = prota.getVelocidad();
-
         boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
 
 
-        if (avanzar) {
+        if (avanzar && !prota.bounds.overlaps(plataforma)) {
             velocidad.x = 500;
-        } else if (retroceder) {
+        } else if (retroceder && !prota.bounds.overlaps(plataforma)) {
             velocidad.x = -500;
         }else {
             velocidad.x = 0;
         }
-        if (saltar && prota.getPosition().y == 0) {
+        if (saltar) {
             prota.jump();
         }
+
+
 
         prota.setVelocidad(velocidad);
     }
