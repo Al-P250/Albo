@@ -63,6 +63,7 @@ public class Main extends ApplicationAdapter {
         boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
         boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        boolean atacar = controllers.isAtacar() || ( Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.W));
 
 
         if (avanzar) {
@@ -75,8 +76,24 @@ public class Main extends ApplicationAdapter {
         if (saltar && prota.getPosition().y == 0) {
             prota.jump();
         }
+        if (atacar) {
+            prota.attack();
+        }
 
         prota.setVelocidad(velocidad);
+    }
+
+    int vidaMob = 1;
+    public void checkAttack() {
+        if (prota.isAttacking && vidaMob > 0) {
+            if (prota.attackBounds.overlaps(esqueleto.getBounds())) {
+                vidaMob--;
+            }
+        }
+
+        if (vidaMob <= 0) {
+            esqueleto.setDead(true);
+        }
     }
 
     @Override
@@ -92,6 +109,8 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         prota.update(deltaTime);
+
+        checkAttack();
 
         if (prota.getBounds().overlaps(plataforma)) {
 
