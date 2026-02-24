@@ -42,7 +42,7 @@ public class Main extends ApplicationAdapter {
 
         prota=new Personaje(100, 100,4);
 
-        plataforma = new Rectangle(400,100,30,100);
+        plataforma = new Rectangle(400,20,30,100);
         texturePlataforma = new Texture("bucket.png");
 
         controllers = new Controllers();
@@ -91,17 +91,8 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        prota.update(deltaTime);
+        prota.update(deltaTime, plataforma);
 
-        if (prota.getBounds().overlaps(plataforma)) {
-
-            if (prota.getVelocidad().y <= 0) {
-
-                prota.getPosition().y = plataforma.y + plataforma.height;
-                prota.getVelocidad().y = 0;
-                prota.suelo = true;
-            }
-        }
 
         esqueleto.update(deltaTime);
 
