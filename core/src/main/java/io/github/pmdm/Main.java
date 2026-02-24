@@ -40,7 +40,7 @@ public class Main extends ApplicationAdapter {
         esqueleto = new Mob(100,100,"SkeletonWalk.png", 13);
         esqueleto.setVelocity(50,0);
 
-        prota=new Personaje("Idle_KG_2.png",100, 100,4);
+        prota=new Personaje(100, 100,4);
 
         plataforma = new Rectangle(400,100,30,100);
         texturePlataforma = new Texture("bucket.png");

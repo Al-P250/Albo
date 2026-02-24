@@ -1,5 +1,6 @@
 package io.github.pmdm;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,44 +9,45 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Personaje{
-    Texture jumpImg;
-    TextureRegion jumpFrame;
-    Texture protaImg;
+    private Animation<TextureRegion> walkAnimation, jumpAnimation;
+    Texture jumpImg, protaImg;
     Sprite protaSprite;
-    private Vector2 position=new Vector2();
-    private Vector2 velocidad = new Vector2();
-    private Array<TextureRegion> frames;
-    private float stateTime;
+    private Vector2 position, velocidad;
+    private float stateTime, gravedad;
     private final float FRAME_DURATION = 0.2f;
-    Vector2 touchPos;
-    boolean suelo;
-    boolean isJumping;
-    private float gravedad;
+    boolean suelo, isJumping;
     Rectangle bounds;
-    public Personaje(String imagen, float inicioX, float inicioY, int frameCount){
-        this.protaImg=new Texture(imagen);
-        this.frames = new Array<>();
+    public Personaje(float inicioX, float inicioY, int frameCount){
+        position=new Vector2();
+        velocidad = new Vector2();
 
-        int frameWidth = protaImg.getWidth() / frameCount;
-        int frameHeight = protaImg.getHeight();
+        protaImg = new Texture("Idle_KG_2.png");
+        int walkFrameWidth = protaImg.getWidth() / frameCount;
+        int walkFrameHeight = protaImg.getHeight();
 
-        for (int i = 0; i < frameCount; i++) {
-            TextureRegion frame = new TextureRegion(protaImg, i * frameWidth, 0, frameWidth, frameHeight);
-            frames.add(frame);
-        }
+        TextureRegion[][] tmpWalk = TextureRegion.split(protaImg,walkFrameWidth,walkFrameHeight);
 
+        walkAnimation = new Animation<>(FRAME_DURATION,tmpWalk[0]);
+        walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
 
-        protaSprite=new Sprite(frames.get(0));
+        protaSprite = new Sprite(protaImg);
+
         protaSprite.setPosition(inicioX,inicioY);
         getPosition().set(inicioX,inicioY);
         protaSprite.setPosition(inicioX,inicioY);
-        touchPos = new Vector2();
         suelo=true;
         setGravedad(1000f);
         protaSprite.setSize(160,160);
 
         jumpImg = new Texture("Jump_KG_2.png");
-        jumpFrame = new TextureRegion(jumpImg);
+        int jumpFrameWidth = protaImg.getWidth() / frameCount;
+        int jumpFrameHeight = protaImg.getHeight();
+
+        TextureRegion[][] tmpJump = TextureRegion.split(jumpImg,jumpFrameWidth,jumpFrameHeight);
+
+        jumpAnimation = new Animation<>(FRAME_DURATION,tmpJump[0]);
+        jumpAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+
 
         bounds = new Rectangle(inicioX, inicioY,100,120);
 
@@ -62,6 +64,8 @@ public class Personaje{
     }
     public void update(float delta){
 
+        stateTime += delta;
+
         getVelocidad().y -= getGravedad() * delta;
         getPosition().x += getVelocidad().x*delta;
         getPosition().y += getVelocidad().y*delta;
@@ -70,24 +74,19 @@ public class Personaje{
             getPosition().y = 0;
             getVelocidad().y = 0;
             suelo = true;
-            isJumping = false;
+            stateTime = 0;
         }
 
-        stateTime += delta;
-        stateTime += delta;
+        TextureRegion currentFrame;
 
         if (!suelo) {
-            int frameWidth = protaImg.getWidth() / 5;
-            int frameHeight = protaImg.getHeight();
-            for (int i = 0; i < 5; i++) {
-                TextureRegion frame = new TextureRegion(protaImg, i * frameWidth, 0, frameWidth, frameHeight);
-                frames.add(frame);
-            }
-            protaSprite.setRegion(jumpFrame);
+            currentFrame = jumpAnimation.getKeyFrame(stateTime);
         } else {
-            int currentFrameIndex = (int) (stateTime / FRAME_DURATION) % frames.size;
-            protaSprite.setRegion(frames.get(currentFrameIndex));
+            currentFrame = walkAnimation.getKeyFrame(stateTime);
         }
+        protaSprite.setRegion(currentFrame);
+        protaSprite.setPosition(position.x, position.y);
+        bounds.setPosition(position.x, position.y);
 
     }
     public Rectangle getBounds() {
