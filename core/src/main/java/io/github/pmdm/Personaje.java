@@ -77,6 +77,12 @@ public class Personaje{
         stateTime += delta;
 
         if (!suelo) {
+            int frameWidth = protaImg.getWidth() / 5;
+            int frameHeight = protaImg.getHeight();
+            for (int i = 0; i < 5; i++) {
+                TextureRegion frame = new TextureRegion(protaImg, i * frameWidth, 0, frameWidth, frameHeight);
+                frames.add(frame);
+            }
             protaSprite.setRegion(jumpFrame);
         } else {
             int currentFrameIndex = (int) (stateTime / FRAME_DURATION) % frames.size;

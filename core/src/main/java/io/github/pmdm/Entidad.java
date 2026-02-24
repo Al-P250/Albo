@@ -35,6 +35,7 @@ public abstract class Entidad {
     }
 
     public void update(float deltaTime) {
+        position.add(velocidad.cpy().scl(deltaTime));
         sprite.setPosition(position.x, position.y);
         stateTime += deltaTime;
         int currentFrameIndex = (int) (stateTime / FRAME_DURATION) % frames.size;

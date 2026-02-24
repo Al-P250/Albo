@@ -10,11 +10,6 @@ public class Mob extends Entidad {
     }
 
     @Override
-    public void update(float deltaTime){
-        position.add(velocidad.cpy().scl(deltaTime));
-
-    }
-    @Override
     public void draw(SpriteBatch batch) {
         super.draw(batch);
         sprite.setSize(160, 320);
