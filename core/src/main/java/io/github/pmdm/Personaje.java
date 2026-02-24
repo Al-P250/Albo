@@ -3,10 +3,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Personaje{
+    Texture jumpImg;
+    TextureRegion jumpFrame;
     Texture protaImg;
     Sprite protaSprite;
     private Vector2 position=new Vector2();
@@ -14,12 +17,11 @@ public class Personaje{
     private Array<TextureRegion> frames;
     private float stateTime;
     private final float FRAME_DURATION = 0.2f;
-
     Vector2 touchPos;
-
     boolean suelo;
     boolean isJumping;
     private float gravedad;
+    Rectangle bounds;
     public Personaje(String imagen, float inicioX, float inicioY, int frameCount){
         this.protaImg=new Texture(imagen);
         this.frames = new Array<>();
@@ -40,18 +42,25 @@ public class Personaje{
         touchPos = new Vector2();
         suelo=true;
         setGravedad(1000f);
+        protaSprite.setSize(160,160);
+
+        jumpImg = new Texture("Jump_KG_2.png");
+        jumpFrame = new TextureRegion(jumpImg);
+
+        bounds = new Rectangle(inicioX, inicioY,100,120);
 
     }
 
     public void jump() {
+        //se podría cambiar a velocidad.y > 0 para evitar problemas en un futuro
         if (suelo) {
             getVelocidad().y = 500f;
             isJumping = true;
             stateTime = 0;
+            suelo = false;
         }
     }
     public void update(float delta){
-        float speed = 500f;
 
         getVelocidad().y -= getGravedad() * delta;
         getPosition().x += getVelocidad().x*delta;
@@ -65,15 +74,21 @@ public class Personaje{
         }
 
         stateTime += delta;
-        int currentFrameIndex = (int) (stateTime / FRAME_DURATION) % frames.size;
-        protaSprite.setRegion(frames.get(currentFrameIndex));
+        stateTime += delta;
 
-        protaSprite.setPosition(getPosition().x, getPosition().y);
+        if (!suelo) {
+            protaSprite.setRegion(jumpFrame);
+        } else {
+            int currentFrameIndex = (int) (stateTime / FRAME_DURATION) % frames.size;
+            protaSprite.setRegion(frames.get(currentFrameIndex));
+        }
 
+    }
+    public Rectangle getBounds() {
+        return bounds;
     }
     public void draw(SpriteBatch batch) {
         protaSprite.draw(batch);
-        protaSprite.setSize(160,160);
     }
     public void dispose(){
         protaImg.dispose();

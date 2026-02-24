@@ -8,19 +8,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     public static SpriteBatch batch;
     private Texture background;
+    Texture texturePlataforma;
     Mob esqueleto;
     Personaje prota;
     Controllers controllers;
     OrthographicCamera camara;
     World world;
 
+    Rectangle plataforma;
 
     @Override
     public void create() {
@@ -33,6 +41,9 @@ public class Main extends ApplicationAdapter {
         esqueleto.setVelocity(50,0);
 
         prota=new Personaje("Idle_KG_2.png",100, 100,4);
+
+        plataforma = new Rectangle(400,100,30,100);
+        texturePlataforma = new Texture("bucket.png");
 
         controllers = new Controllers();
 
@@ -75,10 +86,23 @@ public class Main extends ApplicationAdapter {
 
         handleInput();
 
+        world.step(1/60f,6,2);
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         prota.update(deltaTime);
+
+        if (prota.getBounds().overlaps(plataforma)) {
+
+            if (prota.getVelocidad().y <= 0) {
+
+                prota.getPosition().y = plataforma.y + plataforma.height;
+                prota.getVelocidad().y = 0;
+                prota.suelo = true;
+            }
+        }
+
         esqueleto.update(deltaTime);
 
         camara.position.x +=(prota.getPosition().x -camara.position.x)*0.1f;
@@ -93,11 +117,12 @@ public class Main extends ApplicationAdapter {
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         esqueleto.draw(batch);
         prota.draw(batch);
-
+        batch.draw(texturePlataforma, plataforma.x+5, plataforma.y, plataforma.width+80, plataforma.height);
         batch.end();
 
         controllers.stage.act(deltaTime);
         controllers.draw();
+
     }
 
     @Override
