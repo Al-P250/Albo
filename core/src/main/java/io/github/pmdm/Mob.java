@@ -18,7 +18,6 @@ public class Mob extends Entidad {
         super(spriteSheetPath, frameCount, 0.1f);
         sprite.setPosition(x, y);
 
-        setBounds(new Rectangle((int) x, (int) y,spriteSheet.getWidth(),spriteSheet.getHeight()));
 
         walkImg = new Texture("SkeletonWalk.png");
         int walkFrameWidth = walkImg.getWidth() / frameCount;
@@ -30,6 +29,7 @@ public class Mob extends Entidad {
         walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
 
         mobSprite = new Sprite(walkImg);
+        setBounds(new Rectangle(x, y,120,200));
 
         deathImg = new Texture("Idle_KG_2.png");
         int deathFrameWidth = deathImg.getWidth() / frameCount;

@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Personaje{
-    Rectangle bounds;
     private Animation<TextureRegion> walkAnimation, jumpAnimation, attackAnimation;
     Texture jumpImg, protaImg, attackIMg;
     Sprite protaSprite;
@@ -22,14 +21,17 @@ public class Personaje{
     boolean isAttacking = false;
     float attackTimer = 0;
     final float ATTACK_DURATION = 0.2f;
-    Rectangle attackBounds;
+    Rectangle bounds;
+    private Rectangle hurtBox;
+    private Rectangle attackBox;
     boolean facingRight = true;
 
     public Personaje(float inicioX, float inicioY, int frameCount){
         position=new Vector2();
         velocidad = new Vector2();
 
-        attackBounds = new Rectangle();
+        hurtBox = new Rectangle(inicioX, inicioY, 120, 140);
+        attackBox = new Rectangle();
 
         protaImg = new Texture("Idle_KG_2.png");
         int walkFrameWidth = protaImg.getWidth() / frameCount;
@@ -103,33 +105,43 @@ public class Personaje{
 
         TextureRegion currentFrame;
 
+        hurtBox.setPosition(position.x, position.y);
+
         if (!suelo) {
             currentFrame = jumpAnimation.getKeyFrame(stateTime);
         } else {
             currentFrame = walkAnimation.getKeyFrame(stateTime);
         }
-
         if (isAttacking) {
             currentFrame = attackAnimation.getKeyFrame(stateTime);
-            attackTimer -= delta;
 
-            if (attackTimer <= 0) {
-                isAttacking = false;
-            }
-
-            float attackWidth = 60;
-            float attackHeight = 100;
+            float attackWidth = 80;
+            float attackHeight = 120;
 
             if (facingRight) {
-                attackBounds.set(position.x + bounds.width, position.y, attackWidth, attackHeight);
+                attackBox.set(position.x + hurtBox.width,
+                    position.y,
+                    attackWidth,
+                    attackHeight);
             } else {
-                attackBounds.set(position.x - attackWidth, position.y, attackWidth, attackHeight);
+                attackBox.set(position.x - attackWidth,
+                    position.y,
+                    attackWidth,
+                    attackHeight);
             }
+
+        } else {
+            attackBox.set(0,0,0,0);
         }
+        if (velocidad.x > 0) facingRight = true;
+        if (velocidad.x < 0) facingRight = false;
 
         protaSprite.setRegion(currentFrame);
         protaSprite.setPosition(position.x, position.y);
         bounds.setPosition(position.x, position.y);
+    }
+    public Rectangle getAttackBox() {
+        return attackBox;
     }
     public Rectangle getBounds() {
         return bounds;
