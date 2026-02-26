@@ -103,9 +103,9 @@ public class Personaje{
             float plataformaTop = plataforma.y + plataforma.height;
 
             if (protaBottom >= plataformaTop -10 && protaBottom <= plataformaTop + 10 &&
-                getPosition().x + protaSprite.getWidth() > plataforma.x &&
-                getPosition().x < plataforma.x + plataforma.width) {
-
+                getPosition().x + protaSprite.getWidth() >= plataforma.x &&
+                getPosition().x <= plataforma.x + plataforma.width) {
+                protaSprite.setPosition(getPosition().x, plataformaTop);
                 getPosition().y = plataformaTop;
                 getVelocidad().y = 0;
                 suelo = true;
