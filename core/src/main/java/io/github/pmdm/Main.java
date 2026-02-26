@@ -42,7 +42,7 @@ public class Main extends ApplicationAdapter {
 
         prota=new Personaje(100, 100,4);
 
-        plataforma = new Rectangle(400,100,30,100);
+        plataforma = new Rectangle(400,20,30,100);
         texturePlataforma = new Texture("bucket.png");
 
         controllers = new Controllers();
@@ -59,22 +59,23 @@ public class Main extends ApplicationAdapter {
 
     public void handleInput() {
         Vector2 velocidad = prota.getVelocidad();
-
         boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE));
 
 
-        if (avanzar) {
+        if ((avanzar && !(prota.bounds.overlaps(plataforma)))||( (avanzar && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
             velocidad.x = 500;
-        } else if (retroceder) {
+        } else if ((retroceder && !prota.bounds.overlaps(plataforma))||((retroceder && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
             velocidad.x = -500;
         }else {
             velocidad.x = 0;
         }
-        if (saltar && prota.getPosition().y == 0) {
+        if (saltar) {
             prota.jump();
         }
+
+
 
         prota.setVelocidad(velocidad);
     }
@@ -91,17 +92,8 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        prota.update(deltaTime);
+        prota.update(deltaTime, plataforma);
 
-        if (prota.getBounds().overlaps(plataforma)) {
-
-            if (prota.getVelocidad().y <= 0) {
-
-                prota.getPosition().y = plataforma.y + plataforma.height;
-                prota.getVelocidad().y = 0;
-                prota.suelo = true;
-            }
-        }
 
         esqueleto.update(deltaTime);
 
