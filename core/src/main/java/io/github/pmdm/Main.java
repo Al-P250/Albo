@@ -64,9 +64,9 @@ public class Main extends ApplicationAdapter {
         boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
         boolean atacar = controllers.isAtacar() || Gdx.input.isKeyPressed(Input.Keys.W);
 
-        if ((avanzar && !(prota.bounds.overlaps(plataforma)))||( (avanzar && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
+        if ((avanzar && !(prota.getBounds().overlaps(plataforma.getBounds())))||( (avanzar && prota.getPosition().y >= plataforma.getBounds().y+plataforma.getBounds().height -10 && prota.getPosition().y <= plataforma.getBounds().y+plataforma.getBounds().height +10))) {
             velocidad.x = 500;
-        } else if ((retroceder && !prota.bounds.overlaps(plataforma))||((retroceder && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
+        } else if ((retroceder && !prota.getBounds().overlaps(plataforma.getBounds()))||((retroceder && prota.getPosition().y >= plataforma.getBounds().y+plataforma.getBounds().height -10 && prota.getPosition().y <= plataforma.getBounds().y+plataforma.getBounds().height +10))) {
             velocidad.x = -500;
         }else {
             velocidad.x = 0;
@@ -106,19 +106,9 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        prota.update(deltaTime);
+        prota.update(deltaTime,plataforma.getBounds());
 
         checkAttack();
-
-        if (prota.getBounds().overlaps(plataforma.getBounds())) {
-
-            if (prota.getVelocidad().y <= 0) {
-
-                prota.getPosition().y = plataforma.y + plataforma.height;
-                prota.getVelocidad().y = 0;
-                prota.suelo = true;
-            }
-        }
 
         esqueleto.update(deltaTime);
 
@@ -173,7 +163,6 @@ public class Main extends ApplicationAdapter {
         );
 
         shapeRenderer.end();
-
         controllers.stage.act(deltaTime);
         controllers.draw();
 

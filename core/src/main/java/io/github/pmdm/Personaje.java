@@ -1,9 +1,11 @@
 package io.github.pmdm;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -22,8 +24,7 @@ public class Personaje{
     float attackTimer = 0;
     final float ATTACK_DURATION = 0.2f;
     Rectangle bounds;
-    private Rectangle hurtBox;
-    private Rectangle attackBox;
+    private Rectangle hurtBox, attackBox;
     boolean facingRight = true;
 
     int saltos=0;
@@ -72,7 +73,7 @@ public class Personaje{
         attackAnimation = new Animation<>(FRAME_DURATION,tmpAttack[0]);
         attackAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
-        bounds = new Rectangle(inicioX, inicioY,100,120);
+        bounds = new Rectangle(inicioX, inicioY, 100,protaSprite.getHeight());
         bounds.setPosition(position.x, position.y);
 
     }
