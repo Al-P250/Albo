@@ -64,9 +64,9 @@ public class Main extends ApplicationAdapter {
         boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE));
 
 
-        if (avanzar && !prota.bounds.overlaps(plataforma)) {
+        if ((avanzar && !(prota.bounds.overlaps(plataforma)))||( (avanzar && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
             velocidad.x = 500;
-        } else if (retroceder && !prota.bounds.overlaps(plataforma)) {
+        } else if ((retroceder && !prota.bounds.overlaps(plataforma))||((retroceder && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
             velocidad.x = -500;
         }else {
             velocidad.x = 0;
