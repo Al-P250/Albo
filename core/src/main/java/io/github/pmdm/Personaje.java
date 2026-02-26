@@ -79,7 +79,6 @@ public class Personaje{
     }
 
     public void jump() {
-        //se podría cambiar a velocidad.y > 0 para evitar problemas en un futuro
         if (saltos < numSaltos){
             getVelocidad().y = 500f;
             isJumping = true;

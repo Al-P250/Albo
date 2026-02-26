@@ -42,7 +42,7 @@ public class Main extends ApplicationAdapter {
 
         prota=new Personaje(100, 100,4);
 
-        plataforma = new Plataformas(400,20,50,100, "bucket.png");
+        plataforma = new Plataformas(400,20,200,100, "bucket.png");
 
         controllers = new Controllers();
 
@@ -61,15 +61,21 @@ public class Main extends ApplicationAdapter {
 
         boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE));
         boolean atacar = controllers.isAtacar() || Gdx.input.isKeyPressed(Input.Keys.W);
 
+        if (avanzar &&
+            !(prota.getPosition().x + prota.protaSprite.getWidth() >= plataforma.getBounds().x &&
+                prota.getPosition().x < plataforma.getBounds().x &&
+                prota.getPosition().y < plataforma.getBounds().y + plataforma.getBounds().height)) {
 
-
-        if ((avanzar && !(prota.getPosition().x + prota.protaSprite.getWidth() >= plataforma.x ))||((avanzar && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
             velocidad.x = 500;
-        } else if ((retroceder && !(prota.getPosition().x <= plataforma.x + plataforma.width))||((retroceder && prota.getPosition().y >= plataforma.y+plataforma.height -10 && prota.getPosition().y <= plataforma.y+plataforma.height +10))) {
-            velocidad.x = -500;
+        }else if (retroceder &&
+                !(prota.getPosition().x <= plataforma.getBounds().x + plataforma.getBounds().width &&
+                    prota.getPosition().x + prota.protaSprite.getWidth() > plataforma.getBounds().x + plataforma.getBounds().width &&
+                    prota.getPosition().y < plataforma.getBounds().y + plataforma.getBounds().height)){
+
+            velocidad.x=-500;
         }else {
             velocidad.x = 0;
         }

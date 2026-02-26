@@ -50,10 +50,6 @@ public class Controllers {
                 return true;
             }
 
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                setSaltar(false);
-            }
         });
 
         Image btnAtacar = new Image(new Texture("flecha-abajo.png"));
@@ -148,7 +144,11 @@ public class Controllers {
     }
 
     public boolean isSaltar() {
-        return saltar;
+        if (saltar){
+            saltar=false;
+            return true;
+        }
+        return false;
     }
 
     public void setSaltar(boolean saltar) {
