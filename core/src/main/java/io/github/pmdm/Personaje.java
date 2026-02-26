@@ -11,20 +11,31 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Personaje{
-    private Animation<TextureRegion> walkAnimation, jumpAnimation;
-    Texture jumpImg, protaImg;
+    private Animation<TextureRegion> walkAnimation, jumpAnimation, attackAnimation;
+    Texture jumpImg, protaImg, attackIMg;
     Sprite protaSprite;
     private Vector2 position, velocidad;
     private float stateTime, gravedad;
     private final float FRAME_DURATION = 0.2f;
     boolean suelo, isJumping;
+
+    //ATAQUES
+    boolean isAttacking = false;
+    float attackTimer = 0;
+    final float ATTACK_DURATION = 0.2f;
     Rectangle bounds;
+    private Rectangle hurtBox, attackBox;
+    boolean facingRight = true;
+
     int saltos=0;
     int numSaltos=2;
 
     public Personaje(float inicioX, float inicioY, int frameCount){
         position=new Vector2();
         velocidad = new Vector2();
+
+        hurtBox = new Rectangle(inicioX, inicioY, 120, 140);
+        attackBox = new Rectangle();
 
         protaImg = new Texture("Idle_KG_2.png");
         int walkFrameWidth = protaImg.getWidth() / frameCount;
@@ -53,8 +64,17 @@ public class Personaje{
         jumpAnimation = new Animation<>(FRAME_DURATION,tmpJump[0]);
         jumpAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
+        attackIMg = new Texture("Attack_KG_2.png");
+        int attackFrameWidth = attackIMg.getWidth() / 6;
+        int attackFrameHeight = attackIMg.getHeight();
 
-        bounds = new Rectangle(inicioX, inicioY,100,120);
+        TextureRegion[][] tmpAttack = TextureRegion.split(attackIMg,attackFrameWidth,attackFrameHeight);
+
+        attackAnimation = new Animation<>(FRAME_DURATION,tmpAttack[0]);
+        attackAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+
+        bounds = new Rectangle(inicioX, inicioY, 100,protaSprite.getHeight());
+        bounds.setPosition(position.x, position.y);
 
     }
 
@@ -68,11 +88,17 @@ public class Personaje{
             saltos++;
         }
     }
+    public void attack() {
+        if (!isAttacking) {
+            isAttacking = true;
+            attackTimer = ATTACK_DURATION;
+        }
+    }
+
     public void update(float delta, Rectangle plataforma){
         stateTime += delta;
 
         getVelocidad().y -= getGravedad() * delta;
-
         getPosition().x += getVelocidad().x*delta;
         getPosition().y += getVelocidad().y*delta;
 
@@ -89,11 +115,37 @@ public class Personaje{
 
         TextureRegion currentFrame;
 
+        hurtBox.setPosition(position.x, position.y);
+
         if (!suelo) {
             currentFrame = jumpAnimation.getKeyFrame(stateTime);
         } else {
             currentFrame = walkAnimation.getKeyFrame(stateTime);
         }
+        if (isAttacking) {
+            currentFrame = attackAnimation.getKeyFrame(stateTime);
+
+            float attackWidth = 80;
+            float attackHeight = 120;
+
+            if (facingRight) {
+                attackBox.set(position.x + hurtBox.width,
+                    position.y,
+                    attackWidth,
+                    attackHeight);
+            } else {
+                attackBox.set(position.x - attackWidth,
+                    position.y,
+                    attackWidth,
+                    attackHeight);
+            }
+
+        } else {
+            attackBox.set(0,0,0,0);
+        }
+        if (velocidad.x > 0) facingRight = true;
+        if (velocidad.x < 0) facingRight = false;
+
         protaSprite.setRegion(currentFrame);
         protaSprite.setPosition(position.x, position.y);
         bounds.setPosition(position.x, position.y);
@@ -114,6 +166,9 @@ public class Personaje{
             }
         }
 
+    }
+    public Rectangle getAttackBox() {
+        return attackBox;
     }
     public Rectangle getBounds() {
         return bounds;

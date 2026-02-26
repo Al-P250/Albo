@@ -17,8 +17,13 @@ public class Controllers {
     Stage stage;
     private boolean avanzar;
     private boolean retroceder;
+    private boolean atacar;
     private boolean saltar;
     OrthographicCamera camera;
+    //Movimiento
+    Table tableIzquierda;
+    //Salto y ataque
+    Table tableDerecha;
 
     public Controllers() {
         camera = new OrthographicCamera();
@@ -26,9 +31,13 @@ public class Controllers {
         stage = new Stage(viewport, Main.batch);
         Gdx.input.setInputProcessor(stage);
 
-        Table table = new Table();
-        table.setFillParent(true);
-        table.right().bottom();
+        tableIzquierda = new Table();
+        tableIzquierda.setFillParent(true);
+        tableIzquierda.left().bottom();
+
+        tableDerecha = new Table();
+        tableDerecha.setFillParent(true);
+        tableDerecha.right().bottom();
 
         Image btnSaltar = new Image(new Texture("flecha-arriba.png"));
         btnSaltar.setSize(50,50);
@@ -44,6 +53,23 @@ public class Controllers {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 setSaltar(false);
+            }
+        });
+
+        Image btnAtacar = new Image(new Texture("flecha-abajo.png"));
+        btnAtacar.setSize(50,50);
+
+        btnAtacar.addListener(new InputListener(){
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                setAtacar(true);
+                return true;
+            }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                setAtacar(false);
             }
         });
 
@@ -81,15 +107,22 @@ public class Controllers {
             }
         });
 
-        table.add();
-        table.add(btnSaltar).size(btnSaltar.getWidth(), btnSaltar.getHeight());
-        table.add();
-        table.row().pad(5,5,5,5);
-        table.add(btnRetroceder).size(btnRetroceder.getWidth(), btnRetroceder.getHeight());
-        table.add();
-        table.add(btnAvanzar).size(btnAvanzar.getWidth(), btnAvanzar.getHeight());
 
-        stage.addActor(table);
+        tableIzquierda.add();
+        tableIzquierda.row().pad(5,5,5,5);
+        tableIzquierda.add(btnRetroceder).size(btnRetroceder.getWidth(), btnRetroceder.getHeight());
+        tableIzquierda.add();
+        tableIzquierda.add(btnAvanzar).size(btnAvanzar.getWidth(), btnAvanzar.getHeight());
+
+        stage.addActor(tableIzquierda);
+
+        tableDerecha.add();
+        tableDerecha.row().pad(5,5,5,5);
+        tableDerecha.add(btnAtacar).size(btnAtacar.getWidth(), btnAtacar.getHeight());
+        tableDerecha.add();
+        tableDerecha.add(btnSaltar).size(btnSaltar.getWidth(), btnSaltar.getHeight());
+
+        stage.addActor(tableDerecha);
 
 
     }
@@ -124,5 +157,13 @@ public class Controllers {
 
     public void resize(int wisth, int height) {
         viewport.update(wisth, height);
+    }
+
+    public boolean isAtacar() {
+        return atacar;
+    }
+
+    public void setAtacar(boolean atacar) {
+        this.atacar = atacar;
     }
 }
