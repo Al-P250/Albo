@@ -96,6 +96,7 @@ public class Mob extends Entidad {
 
                 position.x += direccion.x * velocidad.x * deltaTime;
                 position.y += direccion.y * velocidad.y * deltaTime;
+            position.y= 300;
 
                 TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
                 boolean flip = (direccion.x < 0);
