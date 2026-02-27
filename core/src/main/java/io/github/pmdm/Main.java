@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
+    Plataformas suelo;
     ShapeRenderer shapeRenderer;
     public static SpriteBatch batch;
     private Texture background;
@@ -41,10 +42,11 @@ public class Main extends ApplicationAdapter {
 
         plataformas = new Array<>();
 
-        plataformas.add(new Plataformas(400, 20, 200, 100, "bucket.png"));
-        plataformas.add(new Plataformas(850, 250, 200, 40, "bucket.png"));
-        plataformas.add(new Plataformas(1600, 350, 50, 60, "bucket.png"));
-        plataformas.add(new Plataformas(1800, 550, 100, 100, "bucket.png"));
+        plataformas.add(new Plataformas(400, 20, 60, 120, "plataforma2.png"));
+        plataformas.add(new Plataformas(850, 150, 100, 150, "plataforma5.png"));
+        plataformas.add(new Plataformas(1600, 300, 60, 100, "plataforma2.png"));
+        plataformas.add(new Plataformas(1800, 500, 100, 120, "plataforma3.png"));
+        plataformas.add(new Plataformas(0, 0, 2000000, 50, "suelo.png"));
 
         controllers = new Controllers();
 
@@ -119,7 +121,6 @@ public class Main extends ApplicationAdapter {
             colisiones.add(p.getBounds());
         }
 
-        colisiones.add(new Rectangle(0, 0, 2000000, 50));
 
         prota.update(deltaTime, colisiones);
 
