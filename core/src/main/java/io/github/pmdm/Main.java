@@ -36,7 +36,7 @@ public class Main extends ApplicationAdapter {
         background = new Texture(Gdx.files.internal("NonParallax.png"));
 
         esqueleto = new Mob(300,100,"SkeletonWalk.png", 13);
-        esqueleto.setVelocity(50,0);
+        esqueleto.setVelocity(150,0);
 
         prota=new Personaje(100, 100);
 
@@ -94,7 +94,6 @@ public class Main extends ApplicationAdapter {
             if (!golpeRealizado && prota.getAttackBox().overlaps(esqueleto.getBounds())) {
                 vidaMob--;
                 golpeRealizado = true;
-
                 if (vidaMob <= 0) {
                     esqueleto.setDead(true);
                 }
@@ -127,7 +126,6 @@ public class Main extends ApplicationAdapter {
 
         checkAttack();
 
-        esqueleto.update(deltaTime, prota.position);
 
         camara.position.x +=(prota.getPosition().x -camara.position.x)*0.1f;
         camara.position.y +=(prota.getPosition().y -camara.position.y)*0.1f;
@@ -139,7 +137,10 @@ public class Main extends ApplicationAdapter {
         batch.begin();
 
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        esqueleto.draw(batch);
+        if (!esqueleto.shouldRemove()) {
+            esqueleto.update(deltaTime, prota.position);
+            esqueleto.draw(batch);
+        }
         prota.draw(batch);
         for (Plataformas p : plataformas) {
             p.draw(batch);
@@ -176,13 +177,14 @@ public class Main extends ApplicationAdapter {
         );
 
         shapeRenderer.setColor(0,0,1,1); // enemigo
-        shapeRenderer.rect(
-            esqueleto.getBounds().x,
-            esqueleto.getBounds().y,
-            esqueleto.getBounds().width,
-            esqueleto.getBounds().height
-        );
-
+        if (!esqueleto.shouldRemove()) {
+            shapeRenderer.rect(
+                esqueleto.getBounds().x,
+                esqueleto.getBounds().y,
+                esqueleto.getBounds().width,
+                esqueleto.getBounds().height
+            );
+        }
         shapeRenderer.end();
         controllers.stage.act(deltaTime);
         controllers.draw();
