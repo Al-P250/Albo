@@ -99,7 +99,6 @@ public class Personaje{
     }
 
     public void jump() {
-        //se podría cambiar a velocidad.y > 0 para evitar problemas en un futuro
         if (saltos < numSaltos){
             getVelocidad().y = 500f;
             isJumping = true;
@@ -119,9 +118,48 @@ public class Personaje{
     public void update(float delta, Array<Rectangle> superficies){
         stateTime += delta;
 
-        getVelocidad().y -= getGravedad() * delta;
-        getPosition().x += getVelocidad().x*delta;
-        getPosition().y += getVelocidad().y*delta;
+        velocidad.y -= gravedad * delta;
+
+
+        position.x += velocidad.x * delta;
+        bounds.setPosition(position.x, position.y);
+
+        for (Rectangle rect : superficies) {
+            if (bounds.overlaps(rect)) {
+
+                if (velocidad.x > 0) {
+                    position.x = rect.x - bounds.width;
+                }
+                else if (velocidad.x < 0) {
+                    position.x = rect.x + rect.width;
+                }
+
+                velocidad.x = 0;
+                bounds.setPosition(position.x, position.y);
+            }
+        }
+
+        position.y += velocidad.y * delta;
+        bounds.setPosition(position.x, position.y);
+
+        suelo = false;
+
+        for (Rectangle rect : superficies) {
+            if (bounds.overlaps(rect)) {
+
+                if (velocidad.y > 0) {
+                    position.y = rect.y - bounds.height;
+                }
+                else if (velocidad.y < 0) {
+                    position.y = rect.y + rect.height;
+                    suelo = true;
+                    saltos = 0;
+                }
+
+                velocidad.y = 0;
+                bounds.setPosition(position.x, position.y);
+            }
+        }
 
         position.x = MathUtils.clamp(position.x, 0, Gdx.graphics.getWidth() - protaSprite.getWidth());
         position.y = MathUtils.clamp(position.y, 0, Gdx.graphics.getHeight() - protaSprite.getHeight());
