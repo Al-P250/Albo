@@ -35,7 +35,7 @@ public class Main extends ApplicationAdapter {
         background = new Texture(Gdx.files.internal("NonParallax.png"));
 
         esqueleto = new Mob(300,100,"SkeletonWalk.png", 13);
-        esqueleto.setVelocity(50,0);
+        esqueleto.setVelocity(150,0);
 
         prota=new Personaje(100, 100);
 
@@ -92,7 +92,6 @@ public class Main extends ApplicationAdapter {
             if (!golpeRealizado && prota.getAttackBox().overlaps(esqueleto.getBounds())) {
                 vidaMob--;
                 golpeRealizado = true;
-
                 if (vidaMob <= 0) {
                     esqueleto.setDead(true);
                 }
