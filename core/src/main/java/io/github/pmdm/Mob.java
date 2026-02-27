@@ -11,15 +11,24 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Mob extends Entidad {
     Sprite mobSprite;
-    private Animation<TextureRegion> walkAnimation, deathAnimation;
-    Texture deathImg, walkImg;
+    private Animation<TextureRegion> walkAnimation, deathAnimation, attackAnimation;
+    Texture deathImg, walkImg, attackImg;
     private Rectangle bounds;
     private boolean isDead = false;
-
     private boolean eliminar=false;
+    //ATAQUES
+    private boolean isAttacking = false;
+    float attackTimer = 0;
+    final float ATTACK_DURATION = FRAME_DURATION * 7;
+    private Rectangle hurtBox;
+    private Rectangle attackBox;
+
     public Mob(float x, float y, String spriteSheetPath, int frameCount) {
         super(spriteSheetPath, frameCount, 0.1f);
         sprite.setPosition(x, y);
+
+        hurtBox = new Rectangle();
+        setAttackBox(new Rectangle());
 
         walkImg = new Texture("SkeletonWalk.png");
         int walkFrameWidth = walkImg.getWidth() / frameCount;
@@ -36,6 +45,13 @@ public class Mob extends Entidad {
         deathAnimation = new Animation<>(FRAME_DURATION, tmpDeath[0]);
         deathAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
+        attackImg = new Texture("SkeletonAttack.png");
+        int attackFrameWidth = attackImg.getWidth() / 15;
+        int attackFrameHeight = attackImg.getHeight();
+        TextureRegion[][] tmpAttack = TextureRegion.split(attackImg,attackFrameWidth,attackFrameHeight);
+        attackAnimation = new Animation<>(FRAME_DURATION, tmpAttack[0]);
+        attackAnimation.setPlayMode(Animation.PlayMode.NORMAL);
+
         setBounds(new Rectangle(x, y,120,200));
     }
 
@@ -43,23 +59,51 @@ public class Mob extends Entidad {
         stateTime += deltaTime;
 
         if (!isDead) {
-            Vector2 direccion = new Vector2(posPersonaje.x - position.x, posPersonaje.y - position.y);
-            direccion.nor();
+            float distancia = position.dst(posPersonaje);
+            float rangoAtaque = 60f;
 
-            position.y += velocidad.y * deltaTime;
-
-            boolean flip = (direccion.x<0);
-            TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
-
-            if ((flip && !currentFrame.isFlipX()) || (!flip && currentFrame.isFlipX())) {
-                currentFrame.flip(true,false);
+            if (distancia < rangoAtaque && !isAttacking()) {
+                attack();
             }
-            if (flip){
-                position.x-= velocidad.x*deltaTime;
-            }else {
-                position.x += velocidad.x * deltaTime;
+            if (isAttacking()) {
+                attackTimer -= deltaTime;
+                TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
+
+                getAttackBox().width = 60;
+                getAttackBox().height = 80;
+                getAttackBox().y = position.y + (mobSprite.getHeight() / 4);
+
+                boolean flip = (posPersonaje.x < position.x);
+                if (flip) {
+                    getAttackBox().x = position.x - getAttackBox().width;
+                } else {
+                    getAttackBox().x = position.x + mobSprite.getWidth();
+                }
+
+                if ((flip && !currentFrame.isFlipX()) || (!flip && currentFrame.isFlipX())) {
+                    currentFrame.flip(true,false);
+                }
+
+                mobSprite.setRegion(currentFrame);
+
+                if (attackAnimation.isAnimationFinished(stateTime)) {
+                    setAttacking(false);
+                    stateTime = 0;
+                }
+            } else {
+                Vector2 direccion = new Vector2(posPersonaje.x - position.x, posPersonaje.y - position.y);
+                direccion.nor();
+
+                position.x += direccion.x * velocidad.x * deltaTime;
+                position.y += direccion.y * velocidad.y * deltaTime;
+
+                TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
+                boolean flip = (direccion.x < 0);
+                if ((flip && !currentFrame.isFlipX()) || (!flip && currentFrame.isFlipX())) {
+                    currentFrame.flip(true, false);
+                }
+                mobSprite.setRegion(currentFrame);
             }
-            mobSprite.setRegion(currentFrame);
         } else {
             mobSprite.setRegion(deathAnimation.getKeyFrame(stateTime));
             if (deathAnimation.isAnimationFinished(stateTime)) {
@@ -67,9 +111,22 @@ public class Mob extends Entidad {
             }
         }
 
-        mobSprite.setSize(160, 320);
         mobSprite.setPosition(position.x, position.y);
         bounds.setPosition(position.x, position.y);
+    }
+    public void attack() {
+        if (!isAttacking()) {
+            setAttacking(true);
+            attackTimer = FRAME_DURATION * 7;
+            stateTime = 0;
+        }
+    }
+
+    public boolean checkAttackHit(Rectangle characterBounds) {
+        if (isAttacking() && getAttackBox().overlaps(characterBounds)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -98,5 +155,21 @@ public class Mob extends Entidad {
     }
     public boolean shouldRemove() {
         return eliminar;
+    }
+
+    public boolean isAttacking() {
+        return isAttacking;
+    }
+
+    public void setAttacking(boolean attacking) {
+        isAttacking = attacking;
+    }
+
+    public Rectangle getAttackBox() {
+        return attackBox;
+    }
+
+    public void setAttackBox(Rectangle attackBox) {
+        this.attackBox = attackBox;
     }
 }

@@ -35,7 +35,7 @@ public class Main extends ApplicationAdapter {
         world = new World(new Vector2(0,-10), true);
         background = new Texture(Gdx.files.internal("NonParallax.png"));
 
-        esqueleto = new Mob(300,100,"SkeletonWalk.png", 13);
+        esqueleto = new Mob(1500,100,"SkeletonWalk.png", 13);
         esqueleto.setVelocity(150,0);
 
         prota=new Personaje(100, 100);
@@ -123,7 +123,17 @@ public class Main extends ApplicationAdapter {
 
 
         prota.update(deltaTime, colisiones);
+        if (esqueleto.isAttacking()) {
+            if (esqueleto.getAttackBox().overlaps(prota.getBounds())) {
+                if (!prota.isHurt() && !prota.isDead()) {
+                    prota.quitarVida(1);
 
+                    if (prota.getVidas() <= 0) {
+                        prota.setDead(true);
+                    }
+                }
+            }
+        }
         checkAttack();
 
 
