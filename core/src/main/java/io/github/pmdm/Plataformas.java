@@ -2,6 +2,7 @@ package io.github.pmdm;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Plataformas {
@@ -10,7 +11,6 @@ public class Plataformas {
     private Texture texture;
 
     public Plataformas(float x, float y, float width, float height, String imagen) {
-
         texture = new Texture(imagen);
         bounds = new Rectangle(x, y, width, height);
     }
