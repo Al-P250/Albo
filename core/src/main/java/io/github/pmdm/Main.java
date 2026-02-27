@@ -44,7 +44,6 @@ public class Main extends ApplicationAdapter {
 
         plataformas.add(new Plataformas(2300, 20, 60, 120, "plataforma2.png"));
         plataformas.add(new Plataformas(1600, 300, 60, 100, "plataforma2.png"));
-        plataformas.add(new Plataformas(1800, 500, 100, 90, "plataforma3.png"));
         plataformas.add(new Plataformas(0, 0, 300, 740));
         plataformas.add(new Plataformas(300, 200, 300, 300));
         plataformas.add(new Plataformas(600, 200, 1500, 90));
@@ -67,10 +66,10 @@ public class Main extends ApplicationAdapter {
 
         Vector2 velocidad = prota.getVelocidad();
 
-        boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean saltar = controllers.isSaltar() || Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
-        boolean atacar = controllers.isAtacar() || Gdx.input.isKeyJustPressed(Input.Keys.W);
+        boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT)|| Gdx.input.isKeyPressed(Input.Keys.D);
+        boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT)|| Gdx.input.isKeyPressed(Input.Keys.A);
+        boolean saltar = controllers.isSaltar() || Gdx.input.isKeyJustPressed(Input.Keys.UP)|| Gdx.input.isKeyJustPressed(Input.Keys.W);
+        boolean atacar = controllers.isAtacar() || Gdx.input.isKeyJustPressed(Input.Keys.C)|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
 
         if (avanzar) {
             velocidad.x = 500;
