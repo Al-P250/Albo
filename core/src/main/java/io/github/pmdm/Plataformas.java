@@ -13,14 +13,19 @@ public class Plataformas {
     public Plataformas(float x, float y, float width, float height, String imagen) {
         texture = new Texture(imagen);
         bounds = new Rectangle(x, y, width, height);
+    }  public Plataformas(float x, float y, float width, float height) {
+        texture=null;
+        bounds = new Rectangle(x, y, width, height);
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(texture,
-            bounds.x,
-            bounds.y,
-            bounds.width,
-            bounds.height);
+        if (texture!=null) {
+            batch.draw(texture,
+                bounds.x,
+                bounds.y,
+                bounds.width,
+                bounds.height);
+        }
     }
 
     public Rectangle getBounds() {

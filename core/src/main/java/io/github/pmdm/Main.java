@@ -33,12 +33,12 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         world = new World(new Vector2(0,-10), true);
-        background = new Texture(Gdx.files.internal("NonParallax.png"));
+        background = new Texture(Gdx.files.internal("fondoOpt2.jpeg"));
 
-        esqueleto = new Mob(300,100,"SkeletonWalk.png", 13);
-        esqueleto.setVelocity(150,0);
+        esqueleto = new Mob(600,100,"SkeletonWalk.png", 13);
+        esqueleto.setVelocity(250,0);
 
-        prota=new Personaje(100, 100);
+        prota=new Personaje(100, 1650);
 
         plataformas = new Array<>();
 
@@ -46,7 +46,9 @@ public class Main extends ApplicationAdapter {
         plataformas.add(new Plataformas(850, 150, 100, 150, "plataforma5.png"));
         plataformas.add(new Plataformas(1600, 300, 60, 100, "plataforma2.png"));
         plataformas.add(new Plataformas(1800, 500, 100, 120, "plataforma3.png"));
-        plataformas.add(new Plataformas(0, 0, 2000000, 50, "suelo.png"));
+        plataformas.add(new Plataformas(0, 0, 300, 750));
+        plataformas.add(new Plataformas(300, 0, 300, 500));
+        plataformas.add(new Plataformas(600, 150, 1500, 100));
 
         controllers = new Controllers();
 

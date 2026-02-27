@@ -46,7 +46,7 @@ public class Mob extends Entidad {
             Vector2 direccion = new Vector2(posPersonaje.x - position.x, posPersonaje.y - position.y);
             direccion.nor();
 
-            position.y += velocidad.y * deltaTime;
+            position.y= 300;
 
             boolean flip = (direccion.x<0);
             TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
