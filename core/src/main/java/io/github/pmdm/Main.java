@@ -35,20 +35,21 @@ public class Main extends ApplicationAdapter {
         world = new World(new Vector2(0,-10), true);
         background = new Texture(Gdx.files.internal("fondoOpt2.jpeg"));
 
-        esqueleto = new Mob(600,100,"SkeletonWalk.png", 13);
+        esqueleto = new Mob(1699,100,"SkeletonWalk.png", 13);
         esqueleto.setVelocity(250,0);
 
         prota=new Personaje(100, 1650);
 
         plataformas = new Array<>();
 
-        plataformas.add(new Plataformas(400, 20, 60, 120, "plataforma2.png"));
-        plataformas.add(new Plataformas(850, 150, 100, 150, "plataforma5.png"));
+        plataformas.add(new Plataformas(2300, 20, 60, 120, "plataforma2.png"));
         plataformas.add(new Plataformas(1600, 300, 60, 100, "plataforma2.png"));
-        plataformas.add(new Plataformas(1800, 500, 100, 120, "plataforma3.png"));
-        plataformas.add(new Plataformas(0, 0, 300, 750));
-        plataformas.add(new Plataformas(300, 0, 300, 500));
-        plataformas.add(new Plataformas(600, 150, 1500, 100));
+        plataformas.add(new Plataformas(1800, 500, 100, 90, "plataforma3.png"));
+        plataformas.add(new Plataformas(0, 0, 300, 740));
+        plataformas.add(new Plataformas(300, 200, 300, 300));
+        plataformas.add(new Plataformas(600, 200, 1500, 90));
+        plataformas.add(new Plataformas(1800, 500, 1500, 100));
+        plataformas.add(new Plataformas(0, 0, 2500, 1));
 
         controllers = new Controllers();
 
@@ -148,46 +149,46 @@ public class Main extends ApplicationAdapter {
             p.draw(batch);
         }
         batch.end();
-
-        shapeRenderer.setProjectionMatrix(camara.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-
-        shapeRenderer.setColor(0,1,0,1); // plataforma
-        for (Plataformas p : plataformas) {
-            shapeRenderer.rect(
-                p.getBounds().x,
-                p.getBounds().y,
-                p.getBounds().width,
-                p.getBounds().height
-            );
-        }
-
-        shapeRenderer.setColor(0,1,0,1); // personaje
-        shapeRenderer.rect(
-            prota.getBounds().x,
-            prota.getBounds().y,
-            prota.getBounds().width,
-            prota.getBounds().height
-        );
-
-        shapeRenderer.setColor(1,0,0,1); // ataque
-        shapeRenderer.rect(
-            prota.getAttackBox().x,
-            prota.getAttackBox().y,
-            prota.getAttackBox().width,
-            prota.getAttackBox().height
-        );
-
-        shapeRenderer.setColor(0,0,1,1); // enemigo
-        if (!esqueleto.shouldRemove()) {
-            shapeRenderer.rect(
-                esqueleto.getBounds().x,
-                esqueleto.getBounds().y,
-                esqueleto.getBounds().width,
-                esqueleto.getBounds().height
-            );
-        }
-        shapeRenderer.end();
+//
+//        shapeRenderer.setProjectionMatrix(camara.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//
+//        shapeRenderer.setColor(0,1,0,1); // plataforma
+//        for (Plataformas p : plataformas) {
+//            shapeRenderer.rect(
+//                p.getBounds().x,
+//                p.getBounds().y,
+//                p.getBounds().width,
+//                p.getBounds().height
+//            );
+//        }
+//
+//        shapeRenderer.setColor(0,1,0,1); // personaje
+//        shapeRenderer.rect(
+//            prota.getBounds().x,
+//            prota.getBounds().y,
+//            prota.getBounds().width,
+//            prota.getBounds().height
+//        );
+//
+//        shapeRenderer.setColor(1,0,0,1); // ataque
+//        shapeRenderer.rect(
+//            prota.getAttackBox().x,
+//            prota.getAttackBox().y,
+//            prota.getAttackBox().width,
+//            prota.getAttackBox().height
+//        );
+//
+//        shapeRenderer.setColor(0,0,1,1); // enemigo
+//        if (!esqueleto.shouldRemove()) {
+//            shapeRenderer.rect(
+//                esqueleto.getBounds().x,
+//                esqueleto.getBounds().y,
+//                esqueleto.getBounds().width,
+//                esqueleto.getBounds().height
+//            );
+//        }
+//        shapeRenderer.end();
         controllers.stage.act(deltaTime);
         controllers.draw();
 

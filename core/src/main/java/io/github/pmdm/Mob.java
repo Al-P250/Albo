@@ -1,11 +1,13 @@
 package io.github.pmdm;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -46,7 +48,7 @@ public class Mob extends Entidad {
             Vector2 direccion = new Vector2(posPersonaje.x - position.x, posPersonaje.y - position.y);
             direccion.nor();
 
-            position.y= 300;
+            position.y= 290;
 
             boolean flip = (direccion.x<0);
             TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
@@ -59,6 +61,8 @@ public class Mob extends Entidad {
             }else {
                 position.x += velocidad.x * deltaTime;
             }
+            position.x = MathUtils.clamp(position.x, 600,1700);
+
             mobSprite.setRegion(currentFrame);
         } else {
             mobSprite.setRegion(deathAnimation.getKeyFrame(stateTime));
