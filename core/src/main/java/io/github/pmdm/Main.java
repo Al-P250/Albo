@@ -11,12 +11,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
@@ -29,6 +25,7 @@ public class Main extends ApplicationAdapter {
     OrthographicCamera camara;
     World world;
     Plataformas plataforma;
+    boolean golpeRealizado = false;
 
     @Override
     public void create() {
@@ -37,10 +34,10 @@ public class Main extends ApplicationAdapter {
         world = new World(new Vector2(0,-10), true);
         background = new Texture(Gdx.files.internal("NonParallax.png"));
 
-        esqueleto = new Mob(100,100,"SkeletonWalk.png", 13);
+        esqueleto = new Mob(300,100,"SkeletonWalk.png", 13);
         esqueleto.setVelocity(50,0);
 
-        prota=new Personaje(100, 100,4);
+        prota=new Personaje(100, 100);
 
         plataforma = new Plataformas(400,20,50,100, "bucket.png");
 
@@ -61,8 +58,8 @@ public class Main extends ApplicationAdapter {
 
         boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
-        boolean atacar = controllers.isAtacar() || Gdx.input.isKeyPressed(Input.Keys.W);
+        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        boolean atacar = controllers.isAtacar() || Gdx.input.isKeyJustPressed(Input.Keys.W);
 
         if ((avanzar && !(prota.getBounds().overlaps(plataforma.getBounds())))||( (avanzar && prota.getPosition().y >= plataforma.getBounds().y+plataforma.getBounds().height -10 && prota.getPosition().y <= plataforma.getBounds().y+plataforma.getBounds().height +10))) {
             velocidad.x = 500;
@@ -83,14 +80,17 @@ public class Main extends ApplicationAdapter {
 
     int vidaMob = 1;
     public void checkAttack() {
-        if (prota.isAttacking && vidaMob > 0) {
-            if (prota.getAttackBox().overlaps(esqueleto.getBounds())) {
+        if (prota.isAttacking()) {
+            if (!golpeRealizado && prota.getAttackBox().overlaps(esqueleto.getBounds())) {
                 vidaMob--;
-            }
-        }
+                golpeRealizado = true;
 
-        if (vidaMob == 0) {
-            esqueleto.setDead(true);
+                if (vidaMob <= 0) {
+                    esqueleto.setDead(true);
+                }
+            }
+        } else {
+            golpeRealizado = false;
         }
     }
 
@@ -106,11 +106,16 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        prota.update(deltaTime,plataforma.getBounds());
+        Array<Rectangle> colisiones = new Array<>();
+        colisiones.add(plataforma.getBounds());
+
+        colisiones.add(new Rectangle(0, 0, 2000, 50));
+
+        prota.update(deltaTime, colisiones);
 
         checkAttack();
 
-        esqueleto.update(deltaTime);
+        esqueleto.update(deltaTime, prota.position);
 
         camara.position.x +=(prota.getPosition().x -camara.position.x)*0.1f;
         camara.position.y +=(prota.getPosition().y -camara.position.y)*0.1f;
