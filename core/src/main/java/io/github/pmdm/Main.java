@@ -125,7 +125,17 @@ public class Main extends ApplicationAdapter {
 
 
         prota.update(deltaTime, colisiones);
+        if (esqueleto.isAttacking()) {
+            if (esqueleto.getAttackBox().overlaps(prota.getBounds())) {
+                if (!prota.isHurt() && !prota.isDead()) {
+                    prota.quitarVida(1);
 
+                    if (prota.getVidas() <= 0) {
+                        prota.setDead(true);
+                    }
+                }
+            }
+        }
         checkAttack();
 
 

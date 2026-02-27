@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class Personaje{
-    private Animation<TextureRegion> walkAnimation, jumpAnimation, attackAnimation,idleAnimation;
+    private Animation<TextureRegion> walkAnimation, jumpAnimation, attackAnimation,idleAnimation, hurtAnimation, deadAnimation;
     Texture protaImg;
     Sprite protaSprite;
     public Vector2 position, velocidad;
@@ -19,12 +19,15 @@ public class Personaje{
     private final float FRAME_DURATION = 0.2f;
     boolean suelo, isJumping;
 
-    enum Estado {IDLE, WALK, JUMP, ATTACK}
+
+    enum Estado {IDLE, WALK, JUMP, ATTACK, HURT, DEAD}
     private Estado estadoActual;
     private Estado estadoAnterior;
 
     //ATAQUES
     private boolean isAttacking = false;
+    private boolean isDead = false;
+    private boolean isHurt = false;
     float attackTimer = 0;
     final float ATTACK_DURATION = FRAME_DURATION * 7;
     Rectangle bounds;
@@ -34,6 +37,10 @@ public class Personaje{
     int saltos=0;
     int numSaltos=2;
 
+    //DAÑO RECIBIDO
+    private float hurtTimer = 0;
+    private final float HURT_DURATION = FRAME_DURATION * 4;
+    private int vidas = 3;
 
 
     public Personaje(float inicioX, float inicioY){
@@ -81,6 +88,20 @@ public class Personaje{
         }
         attackAnimation = new Animation<>(FRAME_DURATION, attackFrames, Animation.PlayMode.NORMAL);
 
+        //HURT (fila 7, 4 frames)
+        Array<TextureRegion> hurtFrames = new Array<>();
+        for (int i = 0; i < 4; i++) {
+            hurtFrames.add(regions[7][i]);
+        }
+        hurtAnimation = new Animation<>(FRAME_DURATION, hurtFrames, Animation.PlayMode.NORMAL);
+
+        //DEAD (fila 6, 10 frames)
+        Array<TextureRegion> deadFrames = new Array<>();
+        for (int i = 0; i < 10; i++) {
+            deadFrames.add(regions[6][i]);
+        }
+        deadAnimation = new Animation<>(FRAME_DURATION, deadFrames, Animation.PlayMode.NORMAL);
+
         // Sprite inicial
         protaSprite = new Sprite(idleFrames.first());
         protaSprite.setSize(100,100);
@@ -114,13 +135,24 @@ public class Personaje{
             stateTime = 0;
         }
     }
+    public void quitarVida(int cantidad) {
+        if (!isHurt) {
+            setVidas(getVidas() - cantidad);
+            setHurt(true);
+            hurtTimer = HURT_DURATION;
+            stateTime = 0;
+
+            if (facingRight) velocidad.x = -200;
+            else velocidad.x = 200;
+        }
+    }
+
+
 
     public void update(float delta, Array<Rectangle> superficies){
         stateTime += delta;
 
         velocidad.y -= gravedad * delta;
-
-
         position.x += velocidad.x * delta;
         bounds.setPosition(position.x, position.y);
 
@@ -175,6 +207,21 @@ public class Personaje{
         if (velocidad.x > 0) facingRight = true;
         else if (velocidad.x < 0) facingRight = false;
 
+        if (!isDead){
+
+        }
+
+        if (isAttacking) {
+            attackTimer -= delta;
+            if (attackTimer <= 0) isAttacking = false;
+        }
+
+        if (isHurt) {
+            hurtTimer -= delta;
+            if (hurtTimer <= 0) isHurt = false;
+        }
+
+
         if (isAttacking) {
             attackBox.width = 60;
             attackBox.height = 80;
@@ -196,17 +243,21 @@ public class Personaje{
 
         estadoAnterior = estadoActual;
 
-        if (isAttacking()) {
-            estadoActual = Estado.ATTACK;
-        }
-        else if (Math.abs(velocidad.y) > 1f) {
-            estadoActual = Estado.JUMP;
-        }
-        else if (Math.abs(velocidad.x) > 5f) {
-            estadoActual = Estado.WALK;
-        }
-        else {
-            estadoActual = Estado.IDLE;
+        if (!isDead) {
+            if (isAttacking()) {
+                estadoActual = Estado.ATTACK;
+            } else if (Math.abs(velocidad.y) > 1f) {
+                estadoActual = Estado.JUMP;
+            } else if (Math.abs(velocidad.x) > 5f) {
+                estadoActual = Estado.WALK;
+            } else if (isHurt) {
+                estadoActual = Estado.HURT;
+            } else {
+                estadoActual = Estado.IDLE;
+            }
+        } else {
+            estadoActual = Estado.DEAD;
+            velocidad.x = 0;
         }
 
         if (estadoActual != estadoAnterior) {
@@ -217,6 +268,8 @@ public class Personaje{
             case WALK   -> walkAnimation.getKeyFrame(stateTime);
             case JUMP   -> jumpAnimation.getKeyFrame(stateTime);
             case ATTACK -> attackAnimation.getKeyFrame(stateTime);
+            case HURT -> hurtAnimation.getKeyFrame(stateTime);
+            case DEAD -> deadAnimation.getKeyFrame(stateTime);
             default     -> idleAnimation.getKeyFrame(stateTime);
         };
 
@@ -233,6 +286,14 @@ public class Personaje{
         hurtBox.setPosition(position.x, position.y);
 
     }
+    public boolean isHurt() {
+        return isHurt;
+    }
+
+    public void setHurt(boolean hurt) {
+        isHurt = hurt;
+    }
+
     public boolean isAttacking() {
         return isAttacking;
     }
@@ -269,11 +330,22 @@ public class Personaje{
         this.velocidad = velocidad;
     }
 
-    public float getGravedad() {
-        return gravedad;
+    public int getVidas() {
+        return vidas;
     }
 
-    public void setGravedad(float gravedad) {
-        this.gravedad = gravedad;
+    public void setVidas(int vidas) {
+        this.vidas = vidas;
+    }
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setDead(boolean dead) {
+        if (!this.isDead && dead) {
+            this.isDead = true;
+            this.stateTime = 0;
+            this.velocidad.set(0, 0);
+        }
     }
 }
