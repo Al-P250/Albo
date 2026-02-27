@@ -43,8 +43,8 @@ public class Main extends ApplicationAdapter {
 
         plataformas.add(new Plataformas(400, 20, 200, 100, "bucket.png"));
         plataformas.add(new Plataformas(850, 250, 200, 40, "bucket.png"));
-        plataformas.add(new Plataformas(1600, 350, 200, 40, "bucket.png"));
-        plataformas.add(new Plataformas(1800, 550, 200, 40, "bucket.png"));
+        plataformas.add(new Plataformas(1600, 350, 50, 60, "bucket.png"));
+        plataformas.add(new Plataformas(1800, 550, 100, 100, "bucket.png"));
 
         controllers = new Controllers();
 

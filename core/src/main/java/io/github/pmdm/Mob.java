@@ -44,7 +44,6 @@ public class Mob extends Entidad {
             Vector2 direccion = new Vector2(posPersonaje.x - position.x, posPersonaje.y - position.y);
             direccion.nor();
 
-            position.x += velocidad.x * deltaTime;
             position.y += velocidad.y * deltaTime;
 
             boolean flip = (direccion.x<0);
@@ -52,6 +51,11 @@ public class Mob extends Entidad {
 
             if ((flip && !currentFrame.isFlipX()) || (!flip && currentFrame.isFlipX())) {
                 currentFrame.flip(true,false);
+            }
+            if (flip){
+                position.x-= velocidad.x*deltaTime;
+            }else {
+                position.x += velocidad.x * deltaTime;
             }
             mobSprite.setRegion(currentFrame);
         } else {
