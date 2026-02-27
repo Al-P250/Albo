@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 public class Mob extends Entidad {
     Sprite mobSprite;
@@ -18,49 +19,53 @@ public class Mob extends Entidad {
         super(spriteSheetPath, frameCount, 0.1f);
         sprite.setPosition(x, y);
 
-
         walkImg = new Texture("SkeletonWalk.png");
         int walkFrameWidth = walkImg.getWidth() / frameCount;
         int walkFrameHeight = walkImg.getHeight();
-
         TextureRegion[][] tmpWalk = TextureRegion.split(walkImg,walkFrameWidth,walkFrameHeight);
-
         walkAnimation = new Animation<>(FRAME_DURATION,tmpWalk[0]);
         walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
 
-        mobSprite = new Sprite(walkImg);
-        setBounds(new Rectangle(x, y,120,200));
-
-        deathImg = new Texture("Idle_KG_2.png");
-        int deathFrameWidth = deathImg.getWidth() / frameCount;
+        mobSprite = new Sprite();
+        deathImg = new Texture("SkeletonDead.png");
+        int deathFrameWidth = deathImg.getWidth() / 15;
         int deathFrameHeight = deathImg.getHeight();
-
         TextureRegion[][] tmpDeath = TextureRegion.split(deathImg,deathFrameWidth,deathFrameHeight);
-
         deathAnimation = new Animation<>(FRAME_DURATION, tmpDeath[0]);
         deathAnimation.setPlayMode(Animation.PlayMode.NORMAL);
 
+        setBounds(new Rectangle(x, y,120,200));
     }
 
-    @Override
-    public void update(float deltaTime) {
-        super.update(deltaTime);
-        TextureRegion currentFrame;
+    public void update(float deltaTime, Vector2 posPersonaje) {
+        stateTime += deltaTime;
 
         if (!isDead) {
-            currentFrame = walkAnimation.getKeyFrame(stateTime);
+            Vector2 direccion = new Vector2(posPersonaje.x - position.x, posPersonaje.y - position.y);
+            direccion.nor();
+
+            position.x += velocidad.x * deltaTime;
+            position.y += velocidad.y * deltaTime;
+
+            boolean flip = (direccion.x<0);
+            TextureRegion currentFrame = walkAnimation.getKeyFrame(stateTime);
+
+            if ((flip && !currentFrame.isFlipX()) || (!flip && currentFrame.isFlipX())) {
+                currentFrame.flip(true,false);
+            }
+            mobSprite.setRegion(currentFrame);
         } else {
-            currentFrame = deathAnimation.getKeyFrame(stateTime);
+            mobSprite.setRegion(deathAnimation.getKeyFrame(deltaTime));
         }
-        mobSprite.setRegion(currentFrame);
+
+        mobSprite.setSize(160, 320);
         mobSprite.setPosition(position.x, position.y);
         bounds.setPosition(position.x, position.y);
     }
 
     @Override
     public void draw(SpriteBatch batch) {
-        super.draw(batch);
-        sprite.setSize(160, 320);
+        mobSprite.draw(batch);
     }
 
     public Rectangle getBounds() {
@@ -76,6 +81,10 @@ public class Mob extends Entidad {
     }
 
     public void setDead(boolean dead) {
-        isDead = dead;
+        if (!this.isDead && dead) {
+            this.isDead = true;
+            this.stateTime = 0;
+            this.velocidad.set(0, 0);
+        }
     }
 }

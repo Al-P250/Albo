@@ -30,6 +30,7 @@ public abstract class Entidad {
 
         this.position = new Vector2();
         this.velocidad = new Vector2();
+        velocidad.x = -100;
         this.sprite = new Sprite(frames.get(0));
         this.stateTime = 0f;
     }
