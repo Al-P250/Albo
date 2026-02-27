@@ -94,7 +94,7 @@ public class Personaje{
         suelo = true;
         gravedad = 1000f;
 
-        bounds = new Rectangle(inicioX, inicioY, protaSprite.getWidth(),protaSprite.getHeight());
+        bounds = new Rectangle(inicioX+30, inicioY, 40,70);
         bounds.setPosition(position.x, position.y);
     }
 
@@ -172,34 +172,16 @@ public class Personaje{
             saltos=0;
         }
 
-        if (getVelocidad().y <= 0) {
-            for (Rectangle rect : superficies) {
-                float protaBottom = getPosition().y;
-                float rectTop = rect.y + rect.height;
-
-                if (protaBottom >= rectTop - 10 && protaBottom <= rectTop + 10 &&
-                    getPosition().x + protaSprite.getWidth() > rect.x &&
-                    getPosition().x < rect.x + rect.width) {
-
-                    getPosition().y = rectTop;
-                    getVelocidad().y = 0;
-                    suelo = true;
-                    isJumping = false;
-                    saltos = 0;
-                    break;
-                }
-            }
-        }
         if (velocidad.x > 0) facingRight = true;
         else if (velocidad.x < 0) facingRight = false;
 
         if (isAttacking) {
             attackBox.width = 60;
             attackBox.height = 80;
-            attackBox.y = position.y + 20;
+            attackBox.y = position.y;
 
             if (facingRight) {
-                attackBox.x = position.x + protaSprite.getWidth();
+                attackBox.x = position.x + protaSprite.getWidth()-60;
             } else {
                 attackBox.x = position.x - attackBox.width;
             }
@@ -240,7 +222,12 @@ public class Personaje{
 
         protaSprite.setRegion(currentFrame);
         protaSprite.setFlip(!facingRight, false);
-        protaSprite.setPosition(position.x, position.y);
+        if (!facingRight){
+            protaSprite.setPosition(position.x-25, position.y-15);
+
+        }else {
+            protaSprite.setPosition(position.x - 35, position.y - 15);
+        }
 
         bounds.setPosition(position.x, position.y);
         hurtBox.setPosition(position.x, position.y);

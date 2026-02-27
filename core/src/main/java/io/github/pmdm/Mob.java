@@ -15,6 +15,8 @@ public class Mob extends Entidad {
     Texture deathImg, walkImg;
     private Rectangle bounds;
     private boolean isDead = false;
+
+    private boolean eliminar=false;
     public Mob(float x, float y, String spriteSheetPath, int frameCount) {
         super(spriteSheetPath, frameCount, 0.1f);
         sprite.setPosition(x, y);
@@ -59,7 +61,10 @@ public class Mob extends Entidad {
             }
             mobSprite.setRegion(currentFrame);
         } else {
-            mobSprite.setRegion(deathAnimation.getKeyFrame(deltaTime));
+            mobSprite.setRegion(deathAnimation.getKeyFrame(stateTime));
+            if (deathAnimation.isAnimationFinished(stateTime)) {
+                eliminar = true;
+            }
         }
 
         mobSprite.setSize(160, 320);
@@ -90,5 +95,8 @@ public class Mob extends Entidad {
             this.stateTime = 0;
             this.velocidad.set(0, 0);
         }
+    }
+    public boolean shouldRemove() {
+        return eliminar;
     }
 }
