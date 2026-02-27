@@ -24,7 +24,7 @@ public class Main extends ApplicationAdapter {
     Controllers controllers;
     OrthographicCamera camara;
     World world;
-    Plataformas plataforma;
+    Array<Plataformas> plataformas;
     boolean golpeRealizado = false;
 
     @Override
@@ -39,7 +39,12 @@ public class Main extends ApplicationAdapter {
 
         prota=new Personaje(100, 100);
 
-        plataforma = new Plataformas(400,20,200,100, "bucket.png");
+        plataformas = new Array<>();
+
+        plataformas.add(new Plataformas(400, 20, 200, 100, "bucket.png"));
+        plataformas.add(new Plataformas(850, 250, 200, 40, "bucket.png"));
+        plataformas.add(new Plataformas(1600, 350, 200, 40, "bucket.png"));
+        plataformas.add(new Plataformas(1800, 550, 200, 40, "bucket.png"));
 
         controllers = new Controllers();
 
@@ -54,26 +59,21 @@ public class Main extends ApplicationAdapter {
     }
 
     public void handleInput() {
+
         Vector2 velocidad = prota.getVelocidad();
 
         boolean avanzar = controllers.isAvanzar() || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean retroceder = controllers.isRetroceder() || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean saltar = controllers.isSaltar() || ( Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        boolean saltar = controllers.isSaltar() || Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
         boolean atacar = controllers.isAtacar() || Gdx.input.isKeyJustPressed(Input.Keys.W);
 
-        if (avanzar &&
-            !(prota.getPosition().x + prota.protaSprite.getWidth() >= plataforma.getBounds().x &&
-                prota.getPosition().x < plataforma.getBounds().x &&
-                prota.getPosition().y < plataforma.getBounds().y + plataforma.getBounds().height)) {
-
+        if (avanzar) {
             velocidad.x = 500;
-        }else if (retroceder &&
-                !(prota.getPosition().x <= plataforma.getBounds().x + plataforma.getBounds().width &&
-                    prota.getPosition().x + prota.protaSprite.getWidth() > plataforma.getBounds().x + plataforma.getBounds().width &&
-                    prota.getPosition().y < plataforma.getBounds().y + plataforma.getBounds().height)){
-
-            velocidad.x=-500;
-        }else {
+        }
+        else if (retroceder) {
+            velocidad.x = -500;
+        }
+        else {
             velocidad.x = 0;
         }
         if (saltar) {
@@ -115,9 +115,12 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         Array<Rectangle> colisiones = new Array<>();
-        colisiones.add(plataforma.getBounds());
 
-        colisiones.add(new Rectangle(0, 0, 2000, 50));
+        for (Plataformas p : plataformas) {
+            colisiones.add(p.getBounds());
+        }
+
+        colisiones.add(new Rectangle(0, 0, 2000000, 50));
 
         prota.update(deltaTime, colisiones);
 
@@ -137,19 +140,23 @@ public class Main extends ApplicationAdapter {
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         esqueleto.draw(batch);
         prota.draw(batch);
-        plataforma.draw(batch);
+        for (Plataformas p : plataformas) {
+            p.draw(batch);
+        }
         batch.end();
 
         shapeRenderer.setProjectionMatrix(camara.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
         shapeRenderer.setColor(0,1,0,1); // plataforma
-        shapeRenderer.rect(
-            plataforma.getBounds().x,
-            plataforma.getBounds().y,
-            plataforma.getBounds().width,
-            plataforma.getBounds().height
-        );
+        for (Plataformas p : plataformas) {
+            shapeRenderer.rect(
+                p.getBounds().x,
+                p.getBounds().y,
+                p.getBounds().width,
+                p.getBounds().height
+            );
+        }
 
         shapeRenderer.setColor(0,1,0,1); // personaje
         shapeRenderer.rect(
@@ -187,7 +194,9 @@ public class Main extends ApplicationAdapter {
         background.dispose();
         esqueleto.dispose();
         prota.dispose();
-        plataforma.dispose();
+        for (Plataformas p : plataformas) {
+            p.dispose();
+        }
         shapeRenderer.dispose();
     }
 }
